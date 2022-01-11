@@ -1,44 +1,35 @@
 import socket
-import sys
 import ascon
+  
+# take the server name and port name
+  
+host = 'local host'
+port = 5000
+  
+# create a socket at client side
+# using TCP / IP protocol
+s = socket.socket(socket.AF_INET,
+                  socket.SOCK_STREAM)
+  
+# connect it to server and port
+# number on local computer.
+s.connect(('127.0.0.1', port))
+  
+# receive message string from
+# server, at a time 1024 B
+msg = s.recv(1024)
+  
+# repeat as long as message
+# string are not empty
 
-# Create a TCP/IP socket
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+variant = 'Ascon-128'
+key   = bytes(bytearray([i % 256 for i in range(16)]))
+nonce = bytes(bytearray([i % 256 for i in range(16)]))
+ad    = bytes(bytearray([i % 256 for i in range(32)]))
 
-# Connect the socket to the port on the server
-# given by the caller
-server_address = ('127.0.0.1', 1000)
-print('connecting to {} port {}'.format(*server_address))
-sock.connect(server_address)
+ct = ascon.ascon_decrypt(key, nonce, ad[:32], msg, variant)
 
-try:
-
-    message = b'hello world'
-    
-    variant = 'Ascon-128'
-    
-    key   = bytes(bytearray([i % 256 for i in range(16)]))
-    nonce = bytes(bytearray([i % 256 for i in range(16)]))
-    ad    = bytes(bytearray([i % 256 for i in range(32)]))
-    
-    ct = ascon.ascon_encrypt(key, nonce, ad[:32], message, variant)
-
-    
-    print(ct)
-    sock.sendall(ct)
-
-    amount_received = 0
-    amount_expected = len(message)
-    while amount_received < amount_expected:
-        data = sock.recv(16)
-        amount_received += len(data)
-        print('received {!r}'.format(data))
-
-finally:
-    sock.close()
-    
-
-    
-    
-
-
+print("decoded message:" + ct.decode())
+ 
+# disconnect the client
+s.close()

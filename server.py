@@ -1,35 +1,45 @@
+
 import socket
-import sys
+import ascon
+# take the server name and port name
+host = 'local host'
+port = 5000
+  
+# create a socket at server side
+# using TCP / IP protocol
+s = socket.socket(socket.AF_INET,
+                  socket.SOCK_STREAM)
+  
+# bind the socket with server
+# and port number
+s.bind(('', port))
+  
+# allow maximum 1 connection to
+# the socket
+s.listen(1)
+  
+# wait till a client accept
+# connection
+c, addr = s.accept()
+  
+# display client address
+print("CONNECTION FROM:", str(addr))
+  
+# send message to the client after
+# encoding into binary string
+message = b'trying new string'
+    
+variant = 'Ascon-128'
 
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-address = ('127.0.0.1', 1000)
-print('starting server')
+key   = bytes(bytearray([i % 256 for i in range(16)]))
+nonce = bytes(bytearray([i % 256 for i in range(16)]))
+ad    = bytes(bytearray([i % 256 for i in range(32)]))
 
-sock.bind(address)
 
-sock.listen(1)
+ct = ascon.ascon_encrypt(key, nonce, ad[:32], message, variant)
 
-while True:
-    # Wait for a connection
-    print('waiting for a connection')
-    connection, client_address = sock.accept()
-
-    i = 0;
-
-    try:
-        print('connection from', client_address)
-
-        # Receive the data in small chunks and retransmit it
-        while True:
-            data = connection.recv(16)
-            print('received {!r}'.format(data))
-            if data:
-                i = i + 1
-                print('sending ack to client')
-                connection.sendall(('received frame:' + str(i)).encode())
-            else:
-                print('no data from', client_address)
-                break
-    finally:
-        # Clean up the connection
-        connection.close()
+msg = ct
+c.send(msg)
+  
+# disconnect the server
+c.close()
