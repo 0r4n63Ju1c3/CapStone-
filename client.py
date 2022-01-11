@@ -1,5 +1,6 @@
 import socket
 import sys
+import ascon
 
 # Create a TCP/IP socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -12,9 +13,19 @@ sock.connect(server_address)
 
 try:
 
-    message = b'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
-    print('sending {!r}'.format(message))
-    sock.sendall(message)
+    message = b'hello world'
+    
+    variant = 'Ascon-128'
+    
+    key   = bytes(bytearray([i % 256 for i in range(16)]))
+    nonce = bytes(bytearray([i % 256 for i in range(16)]))
+    ad    = bytes(bytearray([i % 256 for i in range(32)]))
+    
+    ct = ascon.ascon_encrypt(key, nonce, ad[:32], message, variant)
+
+    
+    print(ct)
+    sock.sendall(ct)
 
     amount_received = 0
     amount_expected = len(message)
@@ -25,3 +36,9 @@ try:
 
 finally:
     sock.close()
+    
+
+    
+    
+
+
