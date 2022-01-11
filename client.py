@@ -12,7 +12,7 @@ sock.connect(server_address)
 
 try:
 
-    message = b'This is the message.  It will be repeated.'
+    message = b'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
     print('sending {!r}'.format(message))
     sock.sendall(message)
 
