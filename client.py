@@ -1,44 +1,56 @@
 import socket
-import sys
+import random
+import string
 import ascon
+import time
 
-# Create a TCP/IP socket
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+def randomword(length):
+   letters = string.ascii_lowercase
+   return ''.join(random.choice(letters) for i in range(length))
 
-# Connect the socket to the port on the server
-# given by the caller
-server_address = ('127.0.0.1', 1000)
-print('connecting to {} port {}'.format(*server_address))
-sock.connect(server_address)
+def client_program():
+    host = socket.gethostname()  # as both code is running on same pc
+    port = 5000  # socket server port number
 
-try:
+    client_socket = socket.socket()  # instantiate
+    client_socket.connect((host, port))  # connect to the server
 
-    message = b'hello world'
-    
+    # message = input(" -> ")  # take input
+    message = bytes(randomword(10), 'utf-8')
+    print("Sent to server: ", message.decode())
+
     variant = 'Ascon-128'
-    
+
     key   = bytes(bytearray([i % 256 for i in range(16)]))
     nonce = bytes(bytearray([i % 256 for i in range(16)]))
     ad    = bytes(bytearray([i % 256 for i in range(32)]))
-    
+
+    t = time.process_time()
+
     ct = ascon.ascon_encrypt(key, nonce, ad[:32], message, variant)
 
-    
-    print(ct)
-    sock.sendall(ct)
+    message = ct
 
-    amount_received = 0
-    amount_expected = len(message)
-    while amount_received < amount_expected:
-        data = sock.recv(16)
-        amount_received += len(data)
-        print('received {!r}'.format(data))
+    client_socket.send(message)  # send message
+    data = client_socket.recv(1024)  # receive response
 
-finally:
-    sock.close()
-    
+    ct = ascon.ascon_decrypt(key, nonce, ad[:32], message, variant)
 
-    
-    
+    elapsed_time = (time.process_time()  - t) * 1000000000
+
+    print('Received from server: ', ct.decode())  # show in terminal
+    print("Time: ", elapsed_time, " nano seconds")
+
+ #   while message.lower().strip() != 'bye':
+ #       client_socket.send(message.encode())  # send message
+ #       data = client_socket.recv(1024).decode()  # receive response
+ #
+ #       print('Received from server: ' + data)  # show in terminal
+
+        #message = input(" -> ")  # again take input
+
+    client_socket.close()  # close the connection
 
 
+if __name__ == '__main__':
+    client_program()
