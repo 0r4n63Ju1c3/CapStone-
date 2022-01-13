@@ -7,7 +7,7 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 # Connect the socket to the port on the server
 # given by the caller
-server_address = ('127.0.0.1', 1000)
+server_address = ('127.0.0.1' acdsa, 1000)
 print('connecting to {} port {}'.format(*server_address))
 sock.connect(server_address)
 
@@ -28,7 +28,7 @@ try:
     sock.sendall(ct)
 
     amount_received = 0
-    amount_expected = len(message)
+    amount_expected = len(ct)
     while amount_received < amount_expected:
         data = sock.recv(16)
         amount_received += len(data)

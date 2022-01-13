@@ -15,6 +15,8 @@ while True:
     connection, client_address = sock.accept()
 
     i = 0;
+    
+    buffer = ''
 
     try:
         print('connection from', client_address)
@@ -25,11 +27,13 @@ while True:
             print('received {!r}'.format(data))
             if data:
                 i = i + 1
-                print('sending ack to client')
+                buffer = buffer + data
+                print('sending ACK to client')
                 connection.sendall(('received frame:' + str(i)).encode())
             else:
                 print('no data from', client_address)
                 break
     finally:
-        # Clean up the connection
+        
+         sdkljflsdkjflskdfjs
         connection.close()
