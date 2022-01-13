@@ -9,41 +9,51 @@ def randomword(length):
    return ''.join(random.choice(letters) for i in range(length))
 
 def client_program():
+
+    trials = 20
+    message_len = 10
+
     host = socket.gethostname()  # as both code is running on same pc
     port = 5000  # socket server port number
 
     client_socket = socket.socket()  # instantiate
     client_socket.connect((host, port))  # connect to the server
 
-    message = bytes(randomword(10), 'utf-8')
-    print("Sent to server: ", message.decode())
+    total_t = time.process_time()
 
-    variant = 'Ascon-128'
+    for i in range(trials): 
+        message = bytes(randomword(message_len), 'utf-8')
+        #print("Sent to server: ", message.decode())
 
-    key   = bytes(bytearray([i % 256 for i in range(16)]))
-    nonce = bytes(bytearray([i % 256 for i in range(16)]))
-    ad    = bytes(bytearray([i % 256 for i in range(32)]))
+        variant = 'Ascon-128'
 
-    t = time.process_time()
+        key   = bytes(bytearray([i % 256 for i in range(16)]))
+        nonce = bytes(bytearray([i % 256 for i in range(16)]))
+        ad    = bytes(bytearray([i % 256 for i in range(32)]))
 
-    ct = ascon.ascon_encrypt(key, nonce, ad[:32], message, variant)
+        t = time.process_time()
 
-    message = ct
+        ct = ascon.ascon_encrypt(key, nonce, ad[:32], message, variant)
 
-    client_socket.send(message)  # send message
+        message = ct
 
-    data = client_socket.recv(1024)  # receive response
+        client_socket.send(message)  # send message
 
-    print("Message received: ", data)
+        data = client_socket.recv(1024)  # receive response
 
-    ct = ascon.ascon_decrypt(key, nonce, ad[:32], data, variant) # decrypt received
+        #print("Message received: ", data)
 
-    elapsed_time = (time.process_time()  - t) * 1000000000
+        ct = ascon.ascon_decrypt(key, nonce, ad[:32], data, variant) # decrypt received
 
-    print('Received from server: ', ct.decode())  # show in terminal
-    print("Time: ", elapsed_time, " nano seconds")
+        elapsed_time = (time.process_time()  - t)
+
+        #print('Received from server: ', ct.decode())  # show in terminal
+        #print("Time: ", elapsed_time, " nano seconds")
+
+        total_t =+ elapsed_time
 
     client_socket.close()  # close the connection
+    print("Total Time for ", trials ," trials: ", total_t, " in seconds")
 
 
 if __name__ == '__main__':

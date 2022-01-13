@@ -26,13 +26,13 @@ def server_program():
         if not data:
             # if data is not received break
             break
-        print("from connected user: " + str(data))
+        #print("from connected user: " + str(data))
 
         ct = ascon.ascon_decrypt(key, nonce, ad[:32], data, variant)
-        print("Message decoded: ", ct.decode())
+        #print("Message decoded: ", ct.decode())
 
         ct = ascon.ascon_encrypt(key, nonce, ad[:32], ct, variant)
-        print("Message enrypted: ", ct)
+        #print("Message enrypted: ", ct)
 
         #server_socket.send(ct)  # send message
         
