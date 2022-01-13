@@ -21,23 +21,38 @@ def server_program():
     server_socket.listen(2)
     conn, address = server_socket.accept()  # accept new connection
     print("Connection from: " + str(address))
-    while True:
-        data = conn.recv(1024)
-        if not data:
-            # if data is not received break
-            break
-        #print("from connected user: " + str(data))
 
-        ct = ascon.ascon_decrypt(key, nonce, ad[:32], data, variant)
-        #print("Message decoded: ", ct.decode())
+    msg = conn.recv(1024).decode()
+    print(msg)
 
-        ct = ascon.ascon_encrypt(key, nonce, ad[:32], ct, variant)
-        #print("Message enrypted: ", ct)
+    if msg is 'None':
+        while True:
+            data = conn.recv(1024).decode()
+            print(data)
+            if not data:
+                # if data is not received break
+                break
+            
+            conn.send(data)  # send data to the client
 
-        #server_socket.send(ct)  # send message
-        
-        conn.send(ct)  # send data to the client
+    if msg is 'Ascon':
+        while True:
+            data = conn.recv(1024)
+            if not data:
+                # if data is not received break
+                break
+            #print("from connected user: " + str(data))
 
+            ct = ascon.ascon_decrypt(key, nonce, ad[:32], data, variant)
+            #print("Message decoded: ", ct.decode())
+
+            ct = ascon.ascon_encrypt(key, nonce, ad[:32], ct, variant)
+            #print("Message enrypted: ", ct)
+
+            #server_socket.send(ct)  # send message
+            
+            conn.send(ct)  # send data to the client
+    
     conn.close()  # close the connection
 
 

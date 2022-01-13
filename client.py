@@ -8,18 +8,30 @@ def randomword(length):
    letters = string.ascii_lowercase
    return ''.join(random.choice(letters) for i in range(length))
 
-def client_program():
-
-    trials = 20
-    message_len = 10
-
-    host = socket.gethostname()  # as both code is running on same pc
-    port = 5000  # socket server port number
-
-    client_socket = socket.socket()  # instantiate
-    client_socket.connect((host, port))  # connect to the server
+def with_none(trials, message_len, client_socket):
 
     total_t = time.process_time()
+    client_socket.send(b'None')
+
+    for i in range(trials): 
+        message = bytes(randomword(message_len), 'utf-8')
+
+        t = time.process_time()
+
+        client_socket.send(message)  # send message
+
+        data = client_socket.recv(1024)  # receive response
+
+        elapsed_time = (time.process_time()  - t)
+
+        total_t =+ elapsed_time
+
+    print("Total Time (without Encryption) ", trials ," trials: ", total_t/trials, " in seconds")
+
+def with_ascon(trials, message_len, client_socket):
+
+    total_t = time.process_time()
+    client_socket.send(b"Ascon")
 
     for i in range(trials): 
         message = bytes(randomword(message_len), 'utf-8')
@@ -52,8 +64,25 @@ def client_program():
 
         total_t =+ elapsed_time
 
+    print("Total Time (with Ascon) ", trials ," trials: ", total_t/trials, " in seconds")
+
+def client_program():
+
+    trials = 20
+    message_len = 10
+
+    host = socket.gethostname()  # as both code is running on same pc
+    port = 5000  # socket server port number
+
+    client_socket = socket.socket()  # instantiate
+    client_socket.connect((host, port))  # connect to the server
+
+    with_none(trials, message_len, client_socket)
+
+    #with_ascon(trials, message_len, client_socket)
+    
+
     client_socket.close()  # close the connection
-    print("Total Time for ", trials ," trials: ", total_t, " in seconds")
 
 
 if __name__ == '__main__':
