@@ -2,7 +2,7 @@
 import socket
 import ascon
 # take the server name and port name
-host = 'local host'
+host = '10.1.100.218'
 port = 5000
   
 # create a socket at server side
@@ -35,6 +35,7 @@ key   = bytes(bytearray([i % 256 for i in range(16)]))
 nonce = bytes(bytearray([i % 256 for i in range(16)]))
 ad    = bytes(bytearray([i % 256 for i in range(32)]))
 
+print(key)
 
 ct = ascon.ascon_encrypt(key, nonce, ad[:32], message, variant)
 
