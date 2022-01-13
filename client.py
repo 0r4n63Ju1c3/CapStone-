@@ -31,9 +31,12 @@ def client_program():
     message = ct
 
     client_socket.send(message)  # send message
+
     data = client_socket.recv(1024)  # receive response
 
-    ct = ascon.ascon_decrypt(key, nonce, ad[:32], message, variant)
+    print("Message received: ", data)
+
+    ct = ascon.ascon_decrypt(key, nonce, ad[:32], data, variant) # decrypt received
 
     elapsed_time = (time.process_time()  - t) * 1000000000
 
