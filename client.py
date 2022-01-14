@@ -12,6 +12,9 @@ def with_none(trials, message_len, client_socket):
 
     total_t = time.process_time()
     client_socket.send(b'None')
+    recv = client_socket.recv(1024).decode()
+    if(recv == 'connected'):
+        print("Connected to server")
 
     for i in range(trials): 
         message = bytes(randomword(message_len), 'utf-8')
@@ -27,11 +30,15 @@ def with_none(trials, message_len, client_socket):
         total_t =+ elapsed_time
 
     print("Total Time (without Encryption) ", trials ," trials: ", total_t/trials, " in seconds")
+    client_socket.send(b'disconnect')
 
 def with_ascon(trials, message_len, client_socket):
 
     total_t = time.process_time()
     client_socket.send(b"Ascon")
+    recv = client_socket.recv(1024).decode()
+    if(recv == 'connected'):
+        print("Connected to server")
 
     for i in range(trials): 
         message = bytes(randomword(message_len), 'utf-8')
@@ -53,18 +60,14 @@ def with_ascon(trials, message_len, client_socket):
 
         data = client_socket.recv(1024)  # receive response
 
-        #print("Message received: ", data)
-
         ct = ascon.ascon_decrypt(key, nonce, ad[:32], data, variant) # decrypt received
 
         elapsed_time = (time.process_time()  - t)
 
-        #print('Received from server: ', ct.decode())  # show in terminal
-        #print("Time: ", elapsed_time, " nano seconds")
-
         total_t =+ elapsed_time
 
     print("Total Time (with Ascon) ", trials ," trials: ", total_t/trials, " in seconds")
+    client_socket.send(b'disconnect')
 
 def client_program():
 
@@ -78,8 +81,8 @@ def client_program():
     client_socket.connect((host, port))  # connect to the server
 
     with_none(trials, message_len, client_socket)
-
-    #with_ascon(trials, message_len, client_socket)
+    client_socket.send(b'break')
+    with_ascon(trials, message_len, client_socket)
     
 
     client_socket.close()  # close the connection

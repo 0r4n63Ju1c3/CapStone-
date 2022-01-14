@@ -1,6 +1,33 @@
 import socket
 import ascon
 
+def server_none(conn):
+    while True:
+            data = conn.recv(1024)
+            if not data or data == b'break':
+                # if data is not received break
+                break
+            
+            conn.send(data)  # send data to the client
+
+def server_ascon(conn, key, nonce, ad, variant):
+    while True:
+            data = conn.recv(1024)
+            if not data or data == b'break':
+                # if data is not received break
+                break
+            #print("from connected user: " + str(data))
+
+            ct = ascon.ascon_decrypt(key, nonce, ad[:32], data, variant)
+            #print("Message decoded: ", ct.decode())
+
+            ct = ascon.ascon_encrypt(key, nonce, ad[:32], ct, variant)
+            #print("Message enrypted: ", ct)
+
+            #server_socket.send(ct)  # send message
+            
+            conn.send(ct)  # send data to the client
+
 def server_program():
 
     variant = 'Ascon-128'
@@ -22,38 +49,18 @@ def server_program():
     conn, address = server_socket.accept()  # accept new connection
     print("Connection from: " + str(address))
 
-    msg = conn.recv(1024).decode()
-    print(msg)
+    while True:
+        msg = conn.recv(1024).decode()
+        if msg == "disconnect":
+            conn.close()
+        print(msg)
+        conn.send(b'connected')
 
-    if msg is 'None':
-        while True:
-            data = conn.recv(1024).decode()
-            print(data)
-            if not data:
-                # if data is not received break
-                break
-            
-            conn.send(data)  # send data to the client
+        if msg == 'None':
+            server_none(conn)
 
-    if msg is 'Ascon':
-        while True:
-            data = conn.recv(1024)
-            if not data:
-                # if data is not received break
-                break
-            #print("from connected user: " + str(data))
-
-            ct = ascon.ascon_decrypt(key, nonce, ad[:32], data, variant)
-            #print("Message decoded: ", ct.decode())
-
-            ct = ascon.ascon_encrypt(key, nonce, ad[:32], ct, variant)
-            #print("Message enrypted: ", ct)
-
-            #server_socket.send(ct)  # send message
-            
-            conn.send(ct)  # send data to the client
-    
-    conn.close()  # close the connection
+        if msg == 'Ascon':
+            server_ascon(conn, key, nonce, ad, variant)
 
 
 if __name__ == '__main__':
