@@ -3,30 +3,30 @@ import ascon
 
 def server_none(conn):
     while True:
-            data = conn.recv(1024)
-            if not data or data == b'break':
-                # if data is not received break
-                break
-            
-            conn.send(data)  # send data to the client
+        data = conn.recv(1024)
+        if not data or data == b'break':
+            # if data is not received break
+            break
+        
+        conn.send(data)  # send data to the client
 
 def server_ascon(conn, key, nonce, ad, variant):
     while True:
-            data = conn.recv(1024)
-            if not data or data == b'break':
-                # if data is not received break
-                break
-            #print("from connected user: " + str(data))
+        data = conn.recv(1024)
+        if not data or data == b'break':
+            # if data is not received break
+            break
+        #print("from connected user: " + str(data))
 
-            ct = ascon.ascon_decrypt(key, nonce, ad[:32], data, variant)
-            #print("Message decoded: ", ct.decode())
+        ct = ascon.ascon_decrypt(key, nonce, ad[:32], data, variant)
+        #print("Message decoded: ", ct.decode())
 
-            ct = ascon.ascon_encrypt(key, nonce, ad[:32], ct, variant)
-            #print("Message enrypted: ", ct)
+        ct = ascon.ascon_encrypt(key, nonce, ad[:32], ct, variant)
+        #print("Message enrypted: ", ct)
 
-            #server_socket.send(ct)  # send message
-            
-            conn.send(ct)  # send data to the client
+        #server_socket.send(ct)  # send message
+        
+        conn.send(ct)  # send data to the client
 
 def server_program():
 
@@ -51,8 +51,9 @@ def server_program():
 
     while True:
         msg = conn.recv(1024).decode()
-        if msg == "disconnect":
+        if msg == 'disconnected':
             conn.close()
+            break
         print(msg)
         conn.send(b'connected')
 
