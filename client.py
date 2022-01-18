@@ -4,6 +4,9 @@ import string
 import ascon
 import time
 
+none_t = 0
+ascon_t = 0
+
 def randomword(length):
    letters = string.ascii_lowercase
    return ''.join(random.choice(letters) for i in range(length))
@@ -29,7 +32,7 @@ def with_none(trials, message_len, client_socket):
 
         total_t =+ elapsed_time
 
-    print("message len: ", message_len,"| time (seconds): ", total_t/trials,"\n")
+    print("message len: ", message_len,"| time (seconds): ", (total_t/trials)/2,"\n")
     client_socket.send(b'break')
 
 def with_ascon(trials, message_len, client_socket):
@@ -66,7 +69,7 @@ def with_ascon(trials, message_len, client_socket):
 
         total_t =+ elapsed_time
 
-    print("message len: ", message_len,"| time (seconds): ", total_t/trials,"\n")
+    print("message len: ", message_len,"| time (seconds): ", (total_t/trials)/2,"\n")
     client_socket.send(b'break')
 
 def with_aes():
@@ -80,8 +83,9 @@ def client_program():
     trials = 20
     message_len = 10
 
-    host = socket.gethostname()  # as both code is running on same pc
-    port = 5000  # socket server port number
+    #host = socket.gethostname()  # as both code is running on same pc
+    host = '10.1.100.140'
+    port = 5000 # socket server port number
 
     client_socket = socket.socket()  # instantiate
     client_socket.connect((host, port))  # connect to the server

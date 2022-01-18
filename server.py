@@ -37,7 +37,8 @@ def server_program():
     ad    = bytes(bytearray([i % 256 for i in range(32)]))
 
     # get the hostname
-    host = socket.gethostname()
+    #host = socket.gethostname()
+    host = '10.1.100.140'
     port = 5000  # initiate port no above 1024
 
     server_socket = socket.socket()  # get instance

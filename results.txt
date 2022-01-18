@@ -1,0 +1,18 @@
+No Encryption (trials: 20 )
+message len:  10 | time (seconds):  1.931024999999795e-06 
+
+Ascon (trials: 20 )
+message len:  10 | time (seconds):  0.0001715689749999999 
+
+No Encryption (trials: 20 )
+message len:  100 | time (seconds):  4.087524999999564e-06 
+
+Ascon (trials: 20 )
+message len:  100 | time (seconds):  0.00025589212499999985 
+
+No Encryption (trials: 20 )
+message len:  1000 | time (seconds):  3.3680499999994006e-06 
+
+Ascon (trials: 20 )
+message len:  1000 | time (seconds):  0.0010355379499999984 
+
