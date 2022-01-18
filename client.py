@@ -14,7 +14,7 @@ def with_none(trials, message_len, client_socket):
     client_socket.send(b'None')
     recv = client_socket.recv(1024).decode()
     if(recv == 'connected'):
-        print("Connected to server")
+        print("No Encryption", "(trials:", trials,")")
 
     for i in range(trials): 
         message = bytes(randomword(message_len), 'utf-8')
@@ -29,8 +29,8 @@ def with_none(trials, message_len, client_socket):
 
         total_t =+ elapsed_time
 
-    print("Total Time (without Encryption) ", trials ," trials: ", total_t/trials, " in seconds")
-    client_socket.send(b'disconnect')
+    print("message len: ", message_len,"| time (seconds): ", total_t/trials,"\n")
+    client_socket.send(b'break')
 
 def with_ascon(trials, message_len, client_socket):
 
@@ -38,7 +38,7 @@ def with_ascon(trials, message_len, client_socket):
     client_socket.send(b"Ascon")
     recv = client_socket.recv(1024).decode()
     if(recv == 'connected'):
-        print("Connected to server")
+        print("Ascon", "(trials:", trials,")")
 
     for i in range(trials): 
         message = bytes(randomword(message_len), 'utf-8')
@@ -66,8 +66,14 @@ def with_ascon(trials, message_len, client_socket):
 
         total_t =+ elapsed_time
 
-    print("Total Time (with Ascon) ", trials ," trials: ", total_t/trials, " in seconds")
-    client_socket.send(b'disconnect')
+    print("message len: ", message_len,"| time (seconds): ", total_t/trials,"\n")
+    client_socket.send(b'break')
+
+def with_aes():
+    
+    
+    
+    return 0
 
 def client_program():
 
@@ -81,10 +87,19 @@ def client_program():
     client_socket.connect((host, port))  # connect to the server
 
     with_none(trials, message_len, client_socket)
-    client_socket.send(b'break')
     with_ascon(trials, message_len, client_socket)
-    
 
+    message_len = 100
+
+    with_none(trials, message_len, client_socket)
+    with_ascon(trials, message_len, client_socket)
+
+    message_len = 1000
+
+    with_none(trials, message_len, client_socket)
+    with_ascon(trials, message_len, client_socket)
+
+    client_socket.send(b'disconnected') # tell the server to disconect
     client_socket.close()  # close the connection
 
 
