@@ -30,6 +30,7 @@ ad    = bytes(bytearray([i % 256 for i in range(32)]))
 ct = ascon.ascon_decrypt(key, nonce, ad[:32], msg, variant)
 
 print("decoded message:" + ct.decode())
- 
+
+# add aes
 # disconnect the client
 s.close()
