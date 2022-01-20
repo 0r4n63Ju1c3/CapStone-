@@ -1,107 +1,158 @@
+from re import M
 import socket
 import random
 import string
 import ascon
 import time
+from Crypto.Util.Padding import pad, unpad
+from Crypto.Cipher import AES
+
+BLOCK_SIZE = 32 # Bytes
 
 none_t = 0
 ascon_t = 0
+aes_t = 0
 
 def randomword(length):
    letters = string.ascii_lowercase
    return ''.join(random.choice(letters) for i in range(length))
 
-def with_none(trials, message_len, client_socket):
+def with_none(message_len, client_socket, message):
 
-    total_t = time.process_time()
     client_socket.send(b'None')
     recv = client_socket.recv(1024).decode()
-    if(recv == 'connected'):
-        print("No Encryption", "(trials:", trials,")")
 
-    for i in range(trials): 
-        message = bytes(randomword(message_len), 'utf-8')
+    t = time.process_time()
 
-        t = time.process_time()
+    client_socket.send(message)  # send message
 
-        client_socket.send(message)  # send message
+    data = client_socket.recv(1024)  # receive response
 
-        data = client_socket.recv(1024)  # receive response
+    elapsed_time = (time.process_time()  - t)
+    global none_t
+    none_t = none_t + elapsed_time
 
-        elapsed_time = (time.process_time()  - t)
+def with_ascon(message_len, client_socket, message):
 
-        total_t =+ elapsed_time
-
-    print("message len: ", message_len,"| time (seconds): ", (total_t/trials)/2,"\n")
-    client_socket.send(b'break')
-
-def with_ascon(trials, message_len, client_socket):
-
-    total_t = time.process_time()
     client_socket.send(b"Ascon")
     recv = client_socket.recv(1024).decode()
-    if(recv == 'connected'):
-        print("Ascon", "(trials:", trials,")")
 
-    for i in range(trials): 
-        message = bytes(randomword(message_len), 'utf-8')
-        #print("Sent to server: ", message.decode())
+    variant = 'Ascon-128'
+    key   = bytes(bytearray([i % 256 for i in range(16)]))
+    nonce = bytes(bytearray([i % 256 for i in range(16)]))
+    ad    = bytes(bytearray([i % 256 for i in range(32)]))
 
-        variant = 'Ascon-128'
+    t = time.process_time()
 
-        key   = bytes(bytearray([i % 256 for i in range(16)]))
-        nonce = bytes(bytearray([i % 256 for i in range(16)]))
-        ad    = bytes(bytearray([i % 256 for i in range(32)]))
+    message = ascon.ascon_encrypt(key, nonce, ad[:32], message, variant)
 
-        t = time.process_time()
+    client_socket.send(message)  # send message
 
-        ct = ascon.ascon_encrypt(key, nonce, ad[:32], message, variant)
+    data = client_socket.recv(1024)  # receive response
 
-        message = ct
+    message = ascon.ascon_decrypt(key, nonce, ad[:32], data, variant) # decrypt received
 
-        client_socket.send(message)  # send message
+    elapsed_time = (time.process_time()  - t)
 
-        data = client_socket.recv(1024)  # receive response
+    global ascon_t
+    ascon_t = ascon_t + elapsed_time
 
-        ct = ascon.ascon_decrypt(key, nonce, ad[:32], data, variant) # decrypt received
+def with_aes(message_len, client_socket, message):
 
-        elapsed_time = (time.process_time()  - t)
+    client_socket.send(b"AES")
+    recv = client_socket.recv(1024).decode()
 
-        total_t =+ elapsed_time
+    key   = bytes(bytearray([i % 256 for i in range(16)]))
+    cipher = AES.new(key, AES.MODE_ECB)
+    decipher = AES.new(key, AES.MODE_ECB)
 
-    print("message len: ", message_len,"| time (seconds): ", (total_t/trials)/2,"\n")
-    client_socket.send(b'break')
+    t = time.process_time()
 
-def with_aes():
-    
-    
-    
-    return 0
+    message = cipher.encrypt(pad(message, BLOCK_SIZE))
+
+    client_socket.send(message)
+
+    data = client_socket.recv(1024)  # receive response
+
+    data_dec = decipher.decrypt(data)
+
+    elapsed_time = (time.process_time()  - t)
+
+    global aes_t
+    aes_t = aes_t + elapsed_time
 
 def client_program():
 
     trials = 20
-    message_len = 10
 
-    #host = socket.gethostname()  # as both code is running on same pc
-    host = '10.1.100.140'
+    host = socket.gethostname()  # as both code is running on same pc
+    #host = '10.1.100.140'
     port = 5000 # socket server port number
 
     client_socket = socket.socket()  # instantiate
     client_socket.connect((host, port))  # connect to the server
 
-    with_none(trials, message_len, client_socket)
-    with_ascon(trials, message_len, client_socket)
+    global none_t
+    global ascon_t
+    global aes_t
 
-    message_len = 100
+    print("Trials: ", trials)
 
-    with_none(trials, message_len, client_socket)
-    with_ascon(trials, message_len, client_socket)
+    for i in range(trials): 
 
-    message_len = 1000
+        message = bytes(randomword(10), 'utf-8')
 
-    with_none(trials, message_len, client_socket)
-    with_ascon(trials, message_len, client_socket)
+        message_len = 10
+
+        with_none(message_len, client_socket, message)
+        with_ascon(message_len, client_socket, message)
+        with_aes(message_len, client_socket, message)
+
+    print("None Time (10):", (none_t/2)/trials)
+    print("Ascon Time (10):", (ascon_t/2)/trials)
+    print("AES Time (10):", (aes_t/2)/trials)
+
+
+    #global none_t
+    none_t = 0
+    #global ascon_t
+    ascon_t = 0
+    #global aes_t
+    aes_t = 0
+    for i in range(trials): 
+        
+        message = bytes(randomword(10), 'utf-8')
+
+        message_len = 100
+
+        with_none(message_len, client_socket, message)
+        with_ascon(message_len, client_socket, message)
+        with_aes(message_len, client_socket, message)
+
+    print("None Time (100):", (none_t/2)/trials)
+    print("Ascon Time (100):", (ascon_t/2)/trials)
+    print("AES Time (100):", (aes_t/2)/trials)
+
+
+    #global none_t
+    none_t = 0
+    #global ascon_t
+    ascon_t = 0
+    #global aes_t
+    aes_t = 0
+    for i in range(trials): 
+        
+        message = bytes(randomword(10), 'utf-8')
+
+        message_len = 1000
+
+        with_none(message_len, client_socket, message)
+        with_ascon(message_len, client_socket, message)
+        with_aes(message_len, client_socket, message)
+
+    print("None Time (1000):", (none_t/2)/trials)
+    print("Ascon Time (1000):", (ascon_t/2)/trials)
+    print("AES Time (1000):", (aes_t/2)/trials)
 
     client_socket.send(b'disconnected') # tell the server to disconect
     client_socket.close()  # close the connection
