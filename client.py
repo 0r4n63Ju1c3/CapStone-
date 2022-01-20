@@ -85,8 +85,8 @@ def client_program():
 
     trials = 20
 
-    host = socket.gethostname()  # as both code is running on same pc
-    #host = '10.1.100.140'
+    #host = socket.gethostname()  # as both code is running on same pc
+    host = '10.1.100.218'
     port = 5000 # socket server port number
 
     client_socket = socket.socket()  # instantiate
