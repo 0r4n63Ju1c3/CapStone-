@@ -3,9 +3,8 @@ CapStone-
 =============
 
 This is the main repository that we are using for our CapStone project. The goal
-of the project is to compare the encryption standard `ascon`_. The performance
-metrics used are listed below. To accurately gauge the the performance, the
-performance metric for no encryption and AES are also provided in the repo.
+of the project is to measure the performance of `Ascon`_. To accurately gauge
+the performance, Ascon is compared with AES and plaintext.
 
 Performance Metrics
 -------------------
@@ -32,7 +31,7 @@ The process is as follows:
 
 *Diagram shown below*
 
-.. image:: image.PNG
+.. image:: diagram.PNG
 
 
-.. _ascon: https://github.com/meichlseder/pyascon/
+.. _Ascon: https://github.com/meichlseder/pyascon/
