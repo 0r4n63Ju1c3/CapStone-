@@ -3,7 +3,7 @@ CapStone-
 =============
 
 This is the main repository that we are using for our CapStone project. The goal
-of the project is to compare the encryption standard `ASCON`_. The performance
+of the project is to compare the encryption standard `ascon`_. The performance
 metrics used are listed below. To accurately gauge the the performance, the
 performance metric for no encryption and AES are also provided in the repo.
 
@@ -35,4 +35,4 @@ The process is as follows:
 .. image:: image.PNG
 
 
- .. _ASCON: https://ascon.iaik.tugraz.at/
+ .. _ascon: https://ascon.iaik.tugraz.at/
