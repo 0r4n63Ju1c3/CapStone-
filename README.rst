@@ -31,7 +31,7 @@ The process is as follows:
 
 *Diagram shown below*
 
-.. image:: diagram.PNG
+.. image:: diagram.png
 
 
 .. _Ascon: https://github.com/meichlseder/pyascon/
