@@ -32,7 +32,7 @@ The process is as follows:
 
 *Diagram shown below*
 
-..image:: diagram.png
+.. image:: diagram.png
 
 
  .. _ASCON: https://ascon.iaik.tugraz.at/
