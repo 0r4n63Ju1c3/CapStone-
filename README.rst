@@ -32,6 +32,7 @@ The process is as follows:
 *Diagram shown below*
 
 .. image:: diagram.png
+  :align: center 
 
 
 .. _Ascon: https://github.com/meichlseder/pyascon/
