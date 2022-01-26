@@ -6,37 +6,35 @@ from Crypto.Cipher import AES
 BLOCK_SIZE = 32 # Bytes
 
 def server_none(conn):
-    data = conn.recv(1024)
-    conn.send(data)  # send data to the client
+    message = conn.recv(1024)
+    conn.send(message)  # send data to the client
 
 def server_ascon(conn, key, nonce, ad, variant):
     
-    data = conn.recv(1024)
+    message = conn.recv(1024)
     #print("from connected user: " + str(data))
 
-    ct = ascon.ascon_decrypt(key, nonce, ad[:32], data, variant)
+    message = ascon.ascon_decrypt(key, nonce, ad[:32], message, variant)
     #print("Message decoded: ", ct.decode())
 
-    ct = ascon.ascon_encrypt(key, nonce, ad[:32], ct, variant)
+    message = ascon.ascon_encrypt(key, nonce, ad[:32], message, variant)
     #print("Message enrypted: ", ct)
 
     #server_socket.send(ct)  # send message
     
-    conn.send(ct)  # send data to the client
+    conn.send(message)  # send data to the client
 
-def server_aes(conn, key):
-    cipher = AES.new(key, AES.MODE_ECB)
-    decipher = AES.new(key, AES.MODE_ECB)
+def server_aes(conn, cipher, decipher):
     
-    data = conn.recv(1024)
+    message = conn.recv(1024)
     #print("from connected user: " + str(data))
 
-    data_dec = decipher.decrypt(data)
+    message = decipher.decrypt(message)
     #print(unpad(data_dec, BLOCK_SIZE).decode())
     
     #print("Message decoded: ", ct.decode())
 
-    message = cipher.encrypt(pad(data_dec, BLOCK_SIZE))
+    message = cipher.encrypt(pad(message, BLOCK_SIZE))
     conn.send(message)
     #print(unpad(data_dec, BLOCK_SIZE).decode())
     
@@ -51,6 +49,9 @@ def server_program():
     key   = bytes(bytearray([i % 256 for i in range(16)]))
     nonce = bytes(bytearray([i % 256 for i in range(16)]))
     ad    = bytes(bytearray([i % 256 for i in range(32)]))
+
+    cipher = AES.new(key, AES.MODE_ECB)
+    decipher = AES.new(key, AES.MODE_ECB)
 
     # get the hostname
     host = socket.gethostname()
@@ -81,7 +82,7 @@ def server_program():
             server_ascon(conn, key, nonce, ad, variant)
 
         if msg == 'AES':
-            server_aes(conn, key)
+            server_aes(conn, cipher, decipher)
 
 
 if __name__ == '__main__':
