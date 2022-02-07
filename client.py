@@ -13,6 +13,7 @@ none_t = 0
 ascon_t = 0
 aes_t = 0
 ascon_hash_only_t = 0
+ascon_hash_encrypt_t = 0
 
 def randomword(length):
    letters = string.ascii_lowercase
@@ -77,17 +78,39 @@ def with_ascon_hash_only(client_socket, message, key, nonce, ad, variant):
     
     client_socket.send(message)
 
-    integrity_message = client_socket.recv(1024)
-    if integrity_message != b"valid message":
-        print(integrity_message.decode())
-        print("Hashes didn't match on server side")
-
     #print("Ascon message recv:", message)
 
     elapsed_time = (time.process_time()  - t)
 
     global ascon_hash_only_t
     ascon_hash_only_t = ascon_hash_only_t + elapsed_time
+    
+def with_ascon_hash_encrypt(client_socket, message, key, nonce, ad, variant):
+    
+    client_socket.send(b"Ascon-Hash-Encryption")
+    recv = client_socket.recv(1024)
+
+    t = time.process_time()
+
+    #print("Ascon Message sent:", message)
+
+    message = ascon.ascon_encrypt(key, nonce, ad[:32], message, variant)
+    hash_message = ascon.ascon_hash(message, variant="Ascon-Hash", hashlength=32)
+    
+    client_socket.send(message)  # send message
+
+    message = client_socket.recv(1024)  # receive response
+    
+    client_socket.send(hash_message)
+    
+    message = ascon.ascon_decrypt(key, nonce, ad[:32], message, variant) # decrypt received
+
+    #print("Ascon message recv:", message)
+
+    elapsed_time = (time.process_time()  - t)
+
+    global ascon_hash_encrypt_t
+    ascon_hash_encrypt_t = ascon_hash_encrypt_t + elapsed_time
 
 def with_aes(client_socket, message, cipher, decipher):
 
@@ -119,10 +142,12 @@ def trial(message_len, trials, client_socket, key, nonce, ad, variant, cipher, d
     global ascon_t
     global aes_t
     global ascon_hash_t
+    global ascon_hash_encrypt_t
     none_t = 0
     ascon_t = 0
     aes_t = 0
     ascon_hash_t = 0
+    ascon_hash_encrypt_t = 0
 
     print("Message Length:", message_len)
 
@@ -133,10 +158,12 @@ def trial(message_len, trials, client_socket, key, nonce, ad, variant, cipher, d
         with_ascon(client_socket, message, key, nonce, ad, variant)
         with_aes(client_socket, message, cipher, decipher)
         with_ascon_hash_only(client_socket, message, key, nonce, ad, variant)
+        with_ascon_hash_encrypt(client_socket, message, key, nonce, ad, variant)
 
     print("None:", (none_t/2)/trials)
     print("Ascon:", (ascon_t/2)/trials)
     print("Ascon-Hash-Only:", (ascon_hash_only_t/2)/trials)
+    print("Ascon-Hash-Encrypt:", (ascon_hash_encrypt_t/2)/trials)
     print("AES:", (aes_t/2)/trials, "\n")
 
     return 0
@@ -166,6 +193,7 @@ def client_program():
     global ascon_t
     global aes_t
     global ascon_hash_only_t
+    global ascon_hash_encrypt_t
 
     print("Trials: ", trials)
 
