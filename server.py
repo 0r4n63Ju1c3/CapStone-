@@ -41,6 +41,48 @@ def server_aes(conn, cipher, decipher):
     #print("Message enrypted: ", ct)
 
     #server_socket.send(ct)  # send message
+    
+def server_ascon_hash_only(conn, key, nonce, ad, variant):
+    
+    client_hash = conn.recv(1024)
+    #print("from connected user: " + str(data))
+    
+    # confimred received hash
+    conn.send(b"received hash")
+    
+    message = conn.recv(1024)
+    #print("Message decoded: ", ct.decode())
+    
+    server_hash = ascon.ascon_hash(message, variant="Ascon-Hash", hashlength=32)
+    #print("Message enrypted: ", ct)
+    
+    if client_hash != server_hash:
+        print("invalid message")
+    else:
+        print("valid message")
+    #server_socket.send(ct)  # send message
+      # send data to the client          
+
+def server_ascon_hash_encrypt(conn, key, nonce, ad, variant):
+    encrypted_message = conn.recv(1024)
+    #print("from connected user: " + str(data))
+
+    decrypted_message = ascon.ascon_decrypt(key, nonce, ad[:32], encrypted_message, variant)
+    #print("Message decoded: ", ct.decode())
+
+    reencrypt_message = ascon.ascon_encrypt(key, nonce, ad[:32], decrypted_message, variant)
+    #print("Message enrypted: ", ct)
+    conn.send(reencrypt_message)
+    
+    client_hash = conn.recv(1024)
+    
+    server_hash = ascon.ascon_hash(decrypted_message, variant="Ascon-Hash", hashlength=32)
+    
+    if client_hash != server_hash:
+        print("invalid message")
+    else:
+        print("valid message")
+    #server_socket.send(ct)  # send message
 
 def server_program():
 
@@ -55,7 +97,7 @@ def server_program():
 
     # get the hostname
     host = socket.gethostname()
-    #host = '10.1.100.140'
+    #host = '10.1.100.218'
     port = 5000  # initiate port no above 1024
 
     server_socket = socket.socket()  # get instance
@@ -83,6 +125,12 @@ def server_program():
 
         if msg == 'AES':
             server_aes(conn, cipher, decipher)
+            
+        if msg == 'Ascon-Hash-Only':
+            server_ascon_hash_only(conn, key, nonce, ad, variant)
+        
+        if msg == 'Ascon-Hash-Encryption':
+            server_ascon_hash_encrypt(conn, key, nonce, ad, variant)
 
 
 if __name__ == '__main__':
