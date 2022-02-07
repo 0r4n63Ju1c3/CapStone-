@@ -1,16 +1,21 @@
 import ascon
+from Crypto.Util.Padding import pad, unpad
+from Crypto.Cipher import AES
 
-variant = 'Ascon-128'
+BLOCK_SIZE = 32 # Bytes
 
-key   = bytes(bytearray([i % 256 for i in range(16)]))
-nonce = bytes(bytearray([i % 256 for i in range(16)]))
-ad    = bytes(bytearray([i % 256 for i in range(32)]))
+def encrypt(msg, e_key):
+    return ascon.ascon_encrypt(e_key.key, e_key.nonce , e_key.ad[:32], msg, e_key.variant)
 
-def encrypt(msg):
-    return ascon.ascon_encrypt(key, nonce , ad[:32], msg, variant)
+def decrypt(msg, e_key):
+    return ascon.ascon_decrypt(e_key.key, e_key.nonce , e_key.ad[:32], msg, e_key.variant)
 
-def decrypt(msg):
-    return ascon.ascon_decrypt(key, nonce , ad[:32], msg, variant)
+def aesEncrypt(message):
+    key   = bytes(bytearray([i % 256 for i in range(16)]))
+    cipher = AES.new(key, AES.MODE_ECB)
+    return cipher.encrypt(pad(message, BLOCK_SIZE))
 
-def asc_hash(msg):
-    return ascon.ascon_hash(msg, variant="Ascon-Hash", hashlength=32)
+def aesDecrypt(message):
+    key   = bytes(bytearray([i % 256 for i in range(16)]))
+    cipher = AES.new(key, AES.MODE_ECB)
+    return cipher.decrypt(message).decode()
