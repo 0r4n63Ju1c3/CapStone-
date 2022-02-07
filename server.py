@@ -41,6 +41,28 @@ def server_aes(conn, cipher, decipher):
     #print("Message enrypted: ", ct)
 
     #server_socket.send(ct)  # send message
+    
+def server_ascon_hash_only(conn, key, nonce, ad, variant):
+    
+    client_hash = conn.recv(1024)
+    #print("from connected user: " + str(data))
+    
+    # confimred received hash
+    conn.send(b"received hash")
+    
+    message = conn.recv(1024)
+    #print("Message decoded: ", ct.decode())
+    
+    server_hash = ascon.ascon_hash(message, variant="Ascon-Hash", hashlength=32)
+    #print("Message enrypted: ", ct)
+    
+    if client_hash != server_hash:
+        conn.send(b"invalid message")
+    else:
+        conn.send(b"valid message")
+    #server_socket.send(ct)  # send message
+      # send data to the client
+
 
 def server_program():
 
@@ -83,6 +105,9 @@ def server_program():
 
         if msg == 'AES':
             server_aes(conn, cipher, decipher)
+            
+        if msg == 'Ascon-Hash-Only':
+            server_ascon_hash_only(conn, key, nonce, ad, variant)
 
 
 if __name__ == '__main__':
