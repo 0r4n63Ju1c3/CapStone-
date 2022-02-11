@@ -1,0 +1,83 @@
+Testing Ascon algorithm
+
+Current Time: 2022-02-11 10:55:41.638400
+CPU usage is 1.0 %
+RAM usage is 452 MB
+RAM usage is 11.8 %
+Current Time: 2022-02-11 10:55:42.140163
+CPU usage is 3.0 %
+RAM usage is 453 MB
+RAM usage is 11.9 %
+Current Time: 2022-02-11 10:55:42.642310
+CPU usage is 5.0 %
+RAM usage is 454 MB
+RAM usage is 11.9 %
+Current Time: 2022-02-11 10:55:43.145457
+CPU usage is 3.6 %
+RAM usage is 454 MB
+RAM usage is 11.9 %
+Current Time: 2022-02-11 10:55:43.648539
+CPU usage is 7.1 %
+RAM usage is 454 MB
+RAM usage is 11.9 %
+Current Time: 2022-02-11 10:55:44.151700
+CPU usage is 2.0 %
+RAM usage is 451 MB
+RAM usage is 11.8 %
+Current Time: 2022-02-11 10:55:44.654559
+CPU usage is 15.9 %
+RAM usage is 456 MB
+RAM usage is 11.9 %
+Current Time: 2022-02-11 10:55:45.156389
+CPU usage is 2.0 %
+RAM usage is 456 MB
+RAM usage is 11.9 %
+Current Time: 2022-02-11 10:55:45.658905
+CPU usage is 5.1 %
+RAM usage is 456 MB
+RAM usage is 11.9 %
+Current Time: 2022-02-11 10:55:46.162051
+CPU usage is 1.5 %
+RAM usage is 456 MB
+RAM usage is 11.9 %
+Current Time: 2022-02-11 10:55:46.665267
+CPU usage is 4.5 %
+RAM usage is 457 MB
+RAM usage is 11.9 %
+Current Time: 2022-02-11 10:55:47.168390
+CPU usage is 28.0 %
+RAM usage is 461 MB
+RAM usage is 12.1 %
+Current Time: 2022-02-11 10:55:47.670263
+CPU usage is 35.1 %
+RAM usage is 461 MB
+RAM usage is 12.1 %
+Current Time: 2022-02-11 10:55:48.171967
+CPU usage is 36.8 %
+RAM usage is 461 MB
+RAM usage is 12.1 %
+Current Time: 2022-02-11 10:55:48.673736
+CPU usage is 24.2 %
+RAM usage is 453 MB
+RAM usage is 11.8 %
+Current Time: 2022-02-11 10:55:49.175424
+CPU usage is 1.5 %
+RAM usage is 453 MB
+RAM usage is 11.8 %
+Current Time: 2022-02-11 10:55:49.678359
+CPU usage is 11.9 %
+RAM usage is 453 MB
+RAM usage is 11.9 %
+Current Time: 2022-02-11 10:55:50.180583
+CPU usage is 3.5 %
+RAM usage is 453 MB
+RAM usage is 11.9 %
+Current Time: 2022-02-11 10:55:50.683696
+CPU usage is 1.0 %
+RAM usage is 453 MB
+RAM usage is 11.9 %
+Current Time: 2022-02-11 10:55:51.186802
+CPU usage is 1.0 %
+RAM usage is 453 MB
+RAM usage is 11.9 %
+Current Time: 2022-02-11 10:55:51.690094

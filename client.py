@@ -15,6 +15,8 @@ aes_t = 0
 ascon_hash_only_t = 0
 ascon_hash_encrypt_t = 0
 
+system_check = 1
+
 def randomword(length):
    letters = string.ascii_lowercase
    return ''.join(random.choice(letters) for i in range(length))
@@ -33,10 +35,11 @@ def with_none(client_socket, message):
     message = client_socket.recv(1024)  # receive response
 
     #print("None message recv:", data)
-
-    elapsed_time = (time.process_time()  - t)
-    global none_t
-    none_t = none_t + elapsed_time
+    
+    if not system_check:
+        elapsed_time = (time.process_time()  - t)
+        global none_t
+        none_t = none_t + elapsed_time
 
 def with_ascon(client_socket, message, key, nonce, ad, variant):
 
@@ -56,11 +59,12 @@ def with_ascon(client_socket, message, key, nonce, ad, variant):
     message = ascon.ascon_decrypt(key, nonce, ad[:32], message, variant) # decrypt received
 
     #print("Ascon message recv:", message)
+    
+    if not system_check:
+        elapsed_time = (time.process_time()  - t)
 
-    elapsed_time = (time.process_time()  - t)
-
-    global ascon_t
-    ascon_t = ascon_t + elapsed_time
+        global ascon_t
+        ascon_t = ascon_t + elapsed_time
     
 def with_ascon_hash_only(client_socket, message, key, nonce, ad, variant):
     
@@ -79,11 +83,11 @@ def with_ascon_hash_only(client_socket, message, key, nonce, ad, variant):
     client_socket.send(message)
 
     #print("Ascon message recv:", message)
+    if not system_check:
+        elapsed_time = (time.process_time()  - t)
 
-    elapsed_time = (time.process_time()  - t)
-
-    global ascon_hash_only_t
-    ascon_hash_only_t = ascon_hash_only_t + elapsed_time
+        global ascon_hash_only_t
+        ascon_hash_only_t = ascon_hash_only_t + elapsed_time
     
 def with_ascon_hash_encrypt(client_socket, message, key, nonce, ad, variant):
     
@@ -106,11 +110,11 @@ def with_ascon_hash_encrypt(client_socket, message, key, nonce, ad, variant):
     message = ascon.ascon_decrypt(key, nonce, ad[:32], message, variant) # decrypt received
 
     #print("Ascon message recv:", message)
+    if not system_check:
+        elapsed_time = (time.process_time()  - t)
 
-    elapsed_time = (time.process_time()  - t)
-
-    global ascon_hash_encrypt_t
-    ascon_hash_encrypt_t = ascon_hash_encrypt_t + elapsed_time
+        global ascon_hash_encrypt_t
+        ascon_hash_encrypt_t = ascon_hash_encrypt_t + elapsed_time
 
 def with_aes(client_socket, message, cipher, decipher):
 
@@ -130,11 +134,11 @@ def with_aes(client_socket, message, cipher, decipher):
     message = decipher.decrypt(message)
 
     #print("AES Message recv:", message)
+    if not system_check:
+        elapsed_time = (time.process_time()  - t)
 
-    elapsed_time = (time.process_time()  - t)
-
-    global aes_t
-    aes_t = aes_t + elapsed_time
+        global aes_t
+        aes_t = aes_t + elapsed_time
 
 def trial(message_len, trials, client_socket, key, nonce, ad, variant, cipher, decipher):
 
@@ -154,17 +158,18 @@ def trial(message_len, trials, client_socket, key, nonce, ad, variant, cipher, d
     for i in range(trials): 
         message = bytes(randomword(message_len), 'utf-8')
 
-        with_none(client_socket, message)
-        with_ascon(client_socket, message, key, nonce, ad, variant)
-        with_aes(client_socket, message, cipher, decipher)
-        with_ascon_hash_only(client_socket, message, key, nonce, ad, variant)
+        #with_none(client_socket, message)
+        #with_ascon(client_socket, message, key, nonce, ad, variant)
+        #with_aes(client_socket, message, cipher, decipher)
+        #with_ascon_hash_only(client_socket, message, key, nonce, ad, variant)
         with_ascon_hash_encrypt(client_socket, message, key, nonce, ad, variant)
-
-    print("None:", (none_t/2)/trials)
-    print("Ascon:", (ascon_t/2)/trials)
-    print("Ascon-Hash-Only:", (ascon_hash_only_t/2)/trials)
-    print("Ascon-Hash-Encrypt:", (ascon_hash_encrypt_t/2)/trials)
-    print("AES:", (aes_t/2)/trials, "\n")
+        
+    if not system_check:
+        print("None:", (none_t/2)/trials)
+        print("Ascon:", (ascon_t/2)/trials)
+        print("Ascon-Hash-Only:", (ascon_hash_only_t/2)/trials)
+        print("Ascon-Hash-Encrypt:", (ascon_hash_encrypt_t/2)/trials)
+        print("AES:", (aes_t/2)/trials, "\n")
 
     return 0
 
