@@ -34,5 +34,12 @@ The process is as follows:
 .. image:: diagram.png
   :align: center 
 
+Pcap
+----
+
+1. The captured Pcap file is included under /Test Data/
+2. Decryption keys are not included for security purposes
+3. Please contact `Andrew`_ for specifics regarding Pcap
 
 .. _Ascon: https://github.com/meichlseder/pyascon/
+.. _Andrew: https://github.com/0r4n63Ju1c3
