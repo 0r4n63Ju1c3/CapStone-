@@ -1,0 +1,46 @@
+
+Run THESE commands
+
+sudo apt-get update
+
+sudo pip3 install --upgrade setuptools
+
+pip3 install RPI.GPIO
+
+pip3 install adafruit-blink
+
+sudo pip3 install adafruit-circuitpython-bme280
+
+sudo pip3 install adafruit-circuitpython-ads1x15
+cd
+
+sudo modprobe w1-gpio
+
+sudo modprobe w1-therm
+
+cd
+
+sudo apt-get install python3-w1thermsensor
+
+pip3 install paho.mqtt
+
+pip3 install nanoleafapi
+
+
+ENSURE: That iotComm.py and mqtt_protocol.py are in the same folder as the weather code 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+You can find most of this at this website:
+https://bc-robotics.com/tutorials/raspberry-pi-weather-station-part-2/ 
