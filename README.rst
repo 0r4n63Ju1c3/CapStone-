@@ -50,10 +50,11 @@ Results
 
 Challenges
 ----------
+
 1. Working with the IoT team
-  a. Scheduling conflicts between when teams were available to work
+  * Scheduling conflicts between when teams were available to work
      on the source code.
-  b. Deletion of code or refactoring requirements.
+  * Deletion of code or refactoring requirements.
   
 3. Wireless network congestion inside of USAFA made it difficult
 to get packet capture.
