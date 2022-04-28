@@ -45,25 +45,28 @@ while count < stopValue:
     inchRain = 71
 
     freedomSpeed = 71
-    freedomTemp = 10000000000000000000
+    freedomTemp = 4
 
 
     weatherData = {
                    'temperature': str(round(freedomTemp, 2)),
                    'rainfall': str(round(rainFall,2)),
                    'windspeed': str(round(freedomSpeed,2))}
+                   
+                   
     data_str = json.dumps(weatherData)
-
+    
+    #data_str = "hello world"
 
     #pi_id = "weather1"
     #pi_location = "Major Birrer's Cyber City"
     
-    pi_id = "fake"
+    pi_id = "weather1"
     pi_location = "Andrew Lee's laptop"
     
     print(data_str)
 
-    comm.send("weather_all", pi_id, pi_location, "weather_listener", data_str)
+    comm.send("weather_encrypt", pi_id, pi_location, "weather_listener", data_str)
     print("sent")
 
     count = count + 1

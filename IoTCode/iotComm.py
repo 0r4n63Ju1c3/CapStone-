@@ -6,6 +6,7 @@ import socket
 import os
 import json
 import subprocess
+import encryption
 from datetime import datetime
 
 DEBUG = False
@@ -89,7 +90,9 @@ def send(channel, sender_id, sender_location, receiver_id, message):
         print("  Channel:", channel)
         print("  Message:", message, "\n")
     
-    client.publish(channel, encode(wrapMessage(sender_id, sender_location, receiver_id, message)))
+    #client.publish(channel, encode(wrapMessage(sender_id, sender_location, receiver_id, message)))
+    client.publish(channel, encryption.encrypt(encode(wrapMessage(sender_id, sender_location, receiver_id, message)).encode()))
+    
     
     
 # ----------------------------------------
