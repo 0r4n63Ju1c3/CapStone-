@@ -54,8 +54,10 @@ Challenges
   a. Scheduling conflicts between when teams were available to work
      on the source code.
   b. Deletion of code or refactoring requirements.
+  
 3. Wireless network congestion inside of USAFA made it difficult
 to get packet capture.
+
 2. Weather station was outdoors during inclement weather and had
 ittermitent power issues that required the system to be brought
 back indoors. Testing remained indoors for the remainder of
