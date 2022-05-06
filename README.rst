@@ -50,6 +50,9 @@ Results
 * Security test 
 * Implementation on IoT Team
 
+see final `presentation`_ for more information 
+.. _presentation: https://docs.google.com/presentation/d/18Ub8kXIM2R3_FJEu63kFrnCrs4ibdrbBCSs5puOJLVc/edit#slide=id.g12222d6693f_0_13
+
 Challenges
 ----------
 
