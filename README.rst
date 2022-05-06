@@ -69,3 +69,5 @@ our measurements.
 Future
 -------
 A hardware implementation is the next step for this project. This could be accomplished through the use of an FPGA utilizing already written code found online.Current FPGA's are on back order or out of stock and fell outside of the given timeline. Get a FGPA with *System on Chip* (SOC). This makes it easier so that you dont have to write a driver to manage communication between the Pi and FPGA. For this to work, you also need to have a VHDL or Verilog files. Both of these files should be easily found online. 
+
+The other future of the project is to continue to encrypt the IoT systems and create a key exchange system.
