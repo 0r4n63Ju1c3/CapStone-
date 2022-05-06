@@ -51,7 +51,7 @@ Results
 * Implementation on IoT Team
 
 see final `presentation` for more information 
-.. presentation: https://docs.google.com/presentation/d/18Ub8kXIM2R3_FJEu63kFrnCrs4ibdrbBCSs5puOJLVc/edit#slide=id.g12222d6693f_0_13
+https://docs.google.com/presentation/d/18Ub8kXIM2R3_FJEu63kFrnCrs4ibdrbBCSs5puOJLVc/edit#slide=id.g12222d6693f_0_13
 
 Challenges
 ----------
