@@ -32,6 +32,13 @@ The process is as follows:
 .. image:: diagram.png
   :align: center 
 
+IoT
+---
+
+After running locally, the team also ran on the IoT team's system to get real world information. These tests were the same as the ones ran locally with the exception of AES. AES was NOT implemented on the Iot devices and testbed as we did not want to hinder their process with multiple encryption schemes. The tests ran were, power, memory, cpu usage and network data. 
+
+With regard to working with the IoT team, one of the other goals was also trying to implement security as the IoT continued to push out deliverables. This meant that we often had to program the encryption on top of the IoT teams devices. 
+
 Pcap
 ----
 
